@@ -1,5 +1,4 @@
-(ns com.timmciver.crypto.solitaire
-  (:use [clojure.contrib.seq :only (positions)]))
+(ns com.timmciver.crypto.solitaire)
 
 (defn solitaire
   [deck]
@@ -7,6 +6,11 @@
 and returns the modified deck. deck is a sequence of integers
 from 1 to 54 in any order."
   )
+
+(defn random-deck
+  []
+  "Returns a sequence of integers from 1 to 54 in a random order."
+  (shuffle (range 1 55)))
 
 (defn move-card-down
   [deck card spaces]
@@ -21,17 +25,19 @@ consist of integers from 1 to 54 in any order."
 
 (defn joker?
   [card]
-  "Returns true if the card is a joker (53 or 54)."
+  "Returns true if the card is a joker (53 or 54), false otherwise."
+  {:pre [(<= card 54)]}
   (or (= card 53) (= card 54)))
 
 (defn split-at-jokers
   [deck]
   "Returns a three-element vector whose first element is the chunk of cards
 before the first joker, whose second element is the chunk of cards starting
-with the first joker followed by all the cards aftert the first joker but
+with the first joker followed by all the cards after the first joker but
 before the second joker, and finally whose third element is the chunk of
 cards starting with the second joker followed by the rest of the cards in
 the deck."
+  {:pre [(= (count deck) 54)]}
   (let [[top therest] (split-with #(not (joker? %)) deck)
         [middle bottom] (split-with #(not (joker? %)) (rest therest))]
     [top (cons (first therest) middle) bottom]))
