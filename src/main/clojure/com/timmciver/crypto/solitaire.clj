@@ -1,5 +1,6 @@
 (ns com.timmciver.crypto.solitaire
-  (:use [clojure.contrib.def :only (defvar)]))
+  (:use [clojure.contrib.def :only (defvar)]
+        [clojure.string :only (upper-case)]))
 
 (defvar jokerA 53)
 (defvar jokerB 54)
@@ -10,10 +11,29 @@
   {:pre [(<= card 54)]}
   (or (= card jokerA) (= card jokerB)))
 
+(defn ordered-deck
+  "Returns an ordered deck (integers 1 to 54)."
+  []
+  (range 1 55))
+
 (defn random-deck
   "Returns a sequence of integers from 1 to 54 in a random order."
   []
-  (shuffle (range 1 55)))
+  (shuffle (ordered-deck)))
+
+(defn number-to-letter
+  "Generates a seq of letters from a seq of integers.  The integers
+can have any values; a modulo 26 is performed putting all integers in the
+range from 1 to 26 which then maps to A through Z."
+  [ints]
+  (map #(char (+ (mod (- % 1) 26) 65)) ints))
+
+(defn letter-to-number
+  "Generates a seq of integers from a seq of characters (string)
+where 1 corresponds to 'a' and 26 corresponds to 'z'. Accepts both upper
+and lower case letters.  Output is given for letters only, not whitespace."
+  [s]
+  (filter #(and (> % 0) (< % 27)) (map #(- (int %) 64) (upper-case s))))
 
 (defn move-card-down
   "Move card card down spaces spaces in deck. If card moves past bottom of
@@ -47,14 +67,20 @@ of cards below the second Joker."
   (let [[top middle bottom] (split-at-jokers deck)]
     (concat (rest bottom) (concat middle (list (first bottom))) top)))
 
+(defn cut-preserve-bottom
+  "Returns a new deck which is the result of performing a cut at position
+and leaving the bottom card in place."
+  [deck position]
+  (let [[top therest] (split-at position deck)
+        [middle bottom] (split-at (dec (count therest)) therest)]
+    (concat middle top bottom)))
+
 (defn count-cut
   "Returns a new deck which is the result of performing a cut at the value
 of the last card (a joker is 53) but the last card stays in place."
   [deck]
-  (let [bottomcard (if (joker? (last deck)) 53 (last deck))
-        [top therest] (split-at bottomcard deck)
-        [middle bottom] (split-at (dec (count therest)) therest)]
-    (concat middle top bottom)))
+  (let [bottomcard (if (joker? (last deck)) 53 (last deck))]
+    (cut-preserve-bottom deck bottomcard)))
 
 (defn solitaire
   "Performs one iteration of the solitaire algorithm on deck and returns
@@ -65,6 +91,26 @@ the modified deck. deck is a sequence of integers from 1 to 54 in any order."
       (move-card-down jokerB 2)
       triple-cut
       count-cut))
+
+;; (defn key-deck
+;;   "Uses the given passphrase to key deck using the solitaire algorithm."
+;;   [deck passphrase]
+;;   (letfn [(keyfn [card]
+;;             (-> deck
+;;                 solitaire
+;;                 (cut-preserve-bottom card)))]
+;;     (map (keyfn %) (to-int-stream passphrase))))
+
+(defn key-deck
+  "Uses the given passphrase to key deck using the solitaire algorithm."
+  [deck passphrase]
+  (if (empty? passphrase)
+    deck
+    (let [char-val (first (letter-to-number passphrase))
+          new-deck (-> deck
+                       solitaire
+                       (cut-preserve-bottom char-val))]
+      (key-deck new-deck (next passphrase)))))
 
 (defn generate-key
   "Returns the key from the given deck after performing the solitaire algorithm."
@@ -92,3 +138,9 @@ algorithm on the given deck repeatedly producing a key each time."
         key (key-card new-deck)]
     (lazy-seq
      (cons key (solitaire-keystream new-deck)))))
+
+(defn encode
+  "Encrypts the message text by performing the solitaire algorithm on the
+given deck."
+  [message deck]
+  )
