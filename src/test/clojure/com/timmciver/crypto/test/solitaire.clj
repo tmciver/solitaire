@@ -41,9 +41,16 @@
          [4 49 10 24 8 51 44 6 4 33])))
 
 (deftest test-testvectors
-  (let [plaintext "AAAAAAAAAAAAAAA"]
-    (let [key nil
-          cypher-text "EXKYIZSGEHUNTIQ"
-          keyed-deck (key-deck ordered-deck key)
-          encoded-message (encode plaintext keyed-deck)]
-      (is (= cypher-text encoded-message)))))
+  (are [key plaintext cyphertext]
+       (= cyphertext (encode plaintext (key-deck ordered-deck key)))
+       nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"
+       "f" "AAAAAAAAAAAAAAA" "XYIUQBMHKKJBEGY"
+       "fo" "AAAAAAAAAAAAAAA" "TUJYMBERLGXNDIW"
+       "foo" "AAAAAAAAAAAAAAA" "ITHZUJIWGRFARMW"
+       "a" "AAAAAAAAAAAAAAA" "XODALGSCULIQNSC"
+       "aa" "AAAAAAAAAAAAAAA" "OHGWMXXCAIMCIQP"
+       "aaa" "AAAAAAAAAAAAAAA" "DCSQYHBQZNGDRUT"
+       "b" "AAAAAAAAAAAAAAA" "XQEEMOITLZVDSQS"
+       "bc" "AAAAAAAAAAAAAAA" "QNGRKQIHCLGWSCE"
+       "bcd" "AAAAAAAAAAAAAAA" "FMUBYBMAXHNQXCJ"
+       "cryptonomicon" "AAAAAAAAAAAAAAAAAAAAAAAAA" "SUGSRSXSWQRMXOHIPBFPXARYQ"))
