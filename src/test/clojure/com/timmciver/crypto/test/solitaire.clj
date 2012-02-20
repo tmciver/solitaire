@@ -37,7 +37,7 @@
   (let [deck [19 35 39 26 16 45 34 43 20 22 18 33 44 2 10 54 25 4 49 21 29 15 14 7 42 5 23 31 48 9 1 6 51 27 38 41 11 50 24 17 8 53 36 13 3 37 12 30 32 40 52 46 47 28]]
     (is (= (solitaire deck) [30 32 40 52 46 47 28 54 49 21 29 15 14 7 42 5 23 31 48 9 1 6 51 27 38 41 11 50 24 17 8 36 53 19 35 39 26 16 45 34 43 20 22 18 33 44 2 10 25 13 3 37 12 4]))))
 
-#_(deftest test-solitaire-keystream
+(deftest test-solitaire-keystream
   (let [deck (ordered-deck)]
     (is (= (take 10 (solitaire-keystream deck))
            [4 49 10 24 8 51 44 6 4 33]))))
