@@ -3,6 +3,7 @@
 
 (def jokerA 53)
 (def jokerB 54)
+(def ordered-deck (range 1 55))
 
 (defn joker?
   "Returns true if the card is a joker (53 or 54), false otherwise."
@@ -10,15 +11,10 @@
   {:pre [(<= card 54)]}
   (or (= card jokerA) (= card jokerB)))
 
-(defn ordered-deck
-  "Returns an ordered deck (integers 1 to 54)."
-  []
-  (range 1 55))
-
 (defn random-deck
   "Returns a sequence of integers from 1 to 54 in a random order."
   []
-  (shuffle (ordered-deck)))
+  (shuffle ordered-deck))
 
 (defn number-to-letter
   "Generates a seq of letters from a seq of integers.  The integers
