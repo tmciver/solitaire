@@ -1,9 +1,8 @@
 (ns com.timmciver.crypto.solitaire
-  (:use [clojure.contrib.def :only (defvar)]
-        [clojure.string :only (upper-case)]))
+  (:use [clojure.string :only (upper-case)]))
 
-(defvar jokerA 53)
-(defvar jokerB 54)
+(def jokerA 53)
+(def jokerB 54)
 
 (defn joker?
   "Returns true if the card is a joker (53 or 54), false otherwise."
