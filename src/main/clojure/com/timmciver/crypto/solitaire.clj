@@ -145,10 +145,15 @@ algorithm on the given deck repeatedly producing a key each time."
 
 (defn encode
   "Encrypts the message text by performing the solitaire algorithm on the
-given deck. Returns a vector containing values representing the cipher."
+given deck. Returns the cypher text as String."
   [message deck]
   (let [key-stream (solitaire-keystream deck)
-        message-vals (letter-to-number message)
+        ;; message length must be 5n where n is an integer;
+        ;; pad message with X's if it's not
+        num-pads (let [mod5 (mod (count message) 5)]
+                    (if (zero? mod5) 0 (- 5 mod5)))
+        msg (apply str (concat message (repeat num-pads \X)))
+        message-vals (letter-to-number msg)
         encoded-vals (->> (map #(+ %1 %2) key-stream message-vals)
                           (map #(mod % 26)))]
     (apply str (number-to-letter encoded-vals))))
