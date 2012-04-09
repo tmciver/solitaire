@@ -3,8 +3,8 @@
         com.timmciver.crypto.solitaire))
 
 (deftest test-number-to-letter
-  (is (= (number-to-letter [1 2 3]) [\A \B \C]))
-  (is (= (number-to-letter [26 27 28]) [\Z \A \B])))
+  (is (= (map #(number-to-letter %) [1 2 3]) [\A \B \C]))
+  (is (= (map #(number-to-letter %) [26 27 28]) [\Z \A \B])))
 
 (deftest test-letter-to-number
   (is (= (letter-to-number "Hello World") [8 5 12 12 15 23 15 18 12 4])))

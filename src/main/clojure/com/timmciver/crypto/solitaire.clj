@@ -17,11 +17,10 @@
   (shuffle ordered-deck))
 
 (defn number-to-letter
-  "Generates a seq of letters from a seq of integers.  The integers
-can have any values; a modulo 26 is performed putting all integers in the
-range from 1 to 26 which then maps to A through Z."
-  [ints]
-  (map #(char (+ (mod (- % 1) 26) 65)) ints))
+  "Returns the upper-case character that is represented by the given integer
+  where the integers from 1 to 26 map to characters A through Z."
+  [num]
+  (char (+ (mod (- num 1) 26) 65)))
 
 (defn letter-to-number
   "Generates a seq of integers from a seq of characters (string)
@@ -156,4 +155,4 @@ given deck. Returns the cypher text as String."
         message-vals (letter-to-number msg)
         encoded-vals (->> (map #(+ %1 %2) key-stream message-vals)
                           (map #(mod % 26)))]
-    (apply str (number-to-letter encoded-vals))))
+    (apply str (map #(number-to-letter %) encoded-vals))))
