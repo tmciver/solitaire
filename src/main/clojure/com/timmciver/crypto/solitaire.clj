@@ -16,6 +16,13 @@
   []
   (shuffle ordered-deck))
 
+(defn- valid-deck?
+  "Returns true if the given deck is a collection of integers from 1 to 54
+  inclusive and has a size of 54, false otherwise."
+  [deck]
+  (and (= (count deck) 54)
+       (every? #(< 0 % 55) deck)))
+
 (defn number-to-letter
   "Returns the upper-case character that is represented by the given integer
   where the integers from 1 to 26 map to characters A through Z."
