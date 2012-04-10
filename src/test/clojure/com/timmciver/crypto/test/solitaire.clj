@@ -4,7 +4,7 @@
 
 (deftest test-number-to-letter
   (is (= (map number-to-letter [1 2 3]) [\A \B \C]))
-  (is (= (map number-to-letter [26 27 28]) [\Z \A \B])))
+  (is (= (map number-to-letter [24 25 26]) [\X \Y \Z])))
 
 (deftest test-letter-to-number
   (is (= (map letter-to-number "HelloWorld") [8 5 12 12 15 23 15 18 12 4])))
