@@ -23,11 +23,10 @@
   (char (+ (mod (- num 1) 26) 65)))
 
 (defn letter-to-number
-  "Generates a seq of integers from a seq of characters (string)
-where 1 corresponds to 'a' and 26 corresponds to 'z'. Accepts both upper
-and lower case letters.  Output is given for letters only, not whitespace."
-  [s]
-  (filter #(and (> % 0) (< % 27)) (map #(- (int %) 64) (upper-case s))))
+  "Return the uppercase version of a letter corresponding to the given integer
+  where 1 is \"A\" and 26 is \"Z\"."
+  [chr]
+  (- (int (Character/toUpperCase chr)) 64))
 
 (defn move-card-down
   "With two arguments, moves the given card one space closer to the bottom of
@@ -109,7 +108,7 @@ the modified deck. deck is a sequence of integers from 1 to 54 in any order."
   [deck passphrase]
   (if (empty? passphrase)
     deck
-    (let [char-val (first (letter-to-number passphrase))
+    (let [char-val (letter-to-number (first passphrase))
           new-deck (-> deck
                        solitaire
                        (cut-preserve-bottom char-val))]
@@ -152,7 +151,7 @@ given deck. Returns the cypher text as String."
         num-pads (let [mod5 (mod (count message) 5)]
                     (if (zero? mod5) 0 (- 5 mod5)))
         msg (apply str (concat message (repeat num-pads \X)))
-        message-vals (letter-to-number msg)
+        message-vals (map letter-to-number msg)
         encoded-vals (->> (map #(+ %1 %2) key-stream message-vals)
                           (map #(mod % 26)))]
     (apply str (map #(number-to-letter %) encoded-vals))))
