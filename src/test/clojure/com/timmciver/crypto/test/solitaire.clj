@@ -7,6 +7,11 @@
   (is (not (@#'sol/valid-deck? [1 2 3])))
   (is (not (@#'sol/valid-deck? (range 2 56)))))
 
+(deftest test-valid-card?
+  (is (@#'sol/valid-card? (+ 1 (rand-int 54))))
+  (is (not (@#'sol/valid-card? 0)))
+  (is (not (@#'sol/valid-card? 55))))
+
 (defn random-string [length]
   (let [ascii-codes (concat (range 48 58) (range 66 91) (range 97 123))]
     (apply str (repeatedly length #(char (rand-nth ascii-codes)))))) 

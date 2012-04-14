@@ -5,23 +5,18 @@
 (def jokerB 54)
 (def ordered-deck (range 1 55))
 
-(defn joker?
-  "Returns true if the card is a joker (53 or 54), false otherwise."
-  [card]
-  {:pre [(<= card 54)]}
-  (or (= card jokerA) (= card jokerB)))
-
-(defn random-deck
-  "Returns a sequence of integers from 1 to 54 in a random order."
-  []
-  (shuffle ordered-deck))
-
 (defn- valid-deck?
   "Returns true if the given deck is a collection of integers from 1 to 54
   inclusive and has a size of 54, false otherwise."
   [deck]
   (and (= (count deck) 54)
        (every? #(< 0 % 55) deck)))
+
+(defn- valid-card?
+  "Returns true if the given integer represents a valid card (an integer from 1
+  to 54)."
+  [card]
+  (< 0 card 55))
 
 (defn- pad-to-mod-5-with-x
   "Returns a string that is the given string padded with \"X\" so that its
@@ -30,6 +25,17 @@
   (let [mod5 (mod (count s) 5)
         num-pads (if (zero? mod5) 0 (- 5 mod5))]
     (apply str (concat s (repeat num-pads \X)))))
+
+(defn joker?
+  "Returns true if the card is a joker (53 or 54), false otherwise."
+  [card]
+  {:pre [(valid-card? card)]}
+  (or (= card jokerA) (= card jokerB)))
+
+(defn random-deck
+  "Returns a sequence of integers from 1 to 54 in a random order."
+  []
+  (shuffle ordered-deck))
 
 (defn number-to-letter
   "Returns the upper-case character that is represented by the given integer
@@ -52,7 +58,7 @@ toward the bottom of the deck. If card moves past bottom of deck, it cycles back
 to the top of the deck. deck must consist of 54 integers from 1 to 54 in any
 order."
   ([deck card]
-     {:pre [(<= card 54) (valid-deck? deck)]}
+     {:pre [(valid-deck? deck) (valid-card? card)]}
      (let [vdeck (vec deck)
            old-pos (.indexOf vdeck card)]
        (if (< old-pos (dec (count vdeck)))
