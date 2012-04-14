@@ -23,6 +23,14 @@
   (and (= (count deck) 54)
        (every? #(< 0 % 55) deck)))
 
+(defn- pad-to-mod-5-with-x
+  "Returns a string that is the given string padded with \"X\" so that its
+  length is an integer number of 5 characters."
+  [s]
+  (let [mod5 (mod (count s) 5)
+        num-pads (if (zero? mod5) 0 (- 5 mod5))]
+    (apply str (concat s (repeat num-pads \X)))))
+
 (defn number-to-letter
   "Returns the upper-case character that is represented by the given integer
   where the integers from 1 to 26 map to characters A through Z."
@@ -147,12 +155,14 @@ given deck. Returns the cypher text as String."
   [message deck]
   {:pre [(valid-deck? deck)]}
   (let [key-stream (solitaire-keystream deck)
-        ;; message length must be 5n where n is an integer;
-        ;; pad message with X's if it's not
-        num-pads (let [mod5 (mod (count message) 5)]
-                    (if (zero? mod5) 0 (- 5 mod5)))
-        msg (apply str (concat message (repeat num-pads \X)))
+        msg (pad-to-mod-5-with-x message)
         message-vals (map letter-to-number msg)
         encoded-vals (->> (map #(+ %1 %2) key-stream message-vals)
                           (map #(if (<= % 26) % (recur (- % 26)))))]
     (apply str (map number-to-letter encoded-vals))))
+
+(defn decode
+  "Decrypts the given encoded message using the given keyed deck."
+  [encrypted-message deck]
+  {:pre [(valid-deck? deck)]}
+  )

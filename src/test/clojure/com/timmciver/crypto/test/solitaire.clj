@@ -7,6 +7,14 @@
   (is (not (@#'sol/valid-deck? [1 2 3])))
   (is (not (@#'sol/valid-deck? (range 2 56)))))
 
+(defn random-string [length]
+  (let [ascii-codes (concat (range 48 58) (range 66 91) (range 97 123))]
+    (apply str (repeatedly length #(char (rand-nth ascii-codes)))))) 
+
+(deftest test-pad-to-mod-5-with-x
+  (is (= 0 (mod (count (@#'sol/pad-to-mod-5-with-x (random-string (rand-int 30)))) 5)))
+  (is (= "HelloWorld" (@#'sol/pad-to-mod-5-with-x "HelloWorld"))))
+
 (deftest test-number-to-letter
   (is (= (map sol/number-to-letter [1 2 3]) [\A \B \C]))
   (is (= (map sol/number-to-letter [24 25 26]) [\X \Y \Z])))
@@ -45,7 +53,7 @@
   (is (= (take 10 (sol/solitaire-keystream sol/ordered-deck))
          [4 49 10 24 8 51 44 6 4 33])))
 
-(deftest test-testvectors
+(deftest test-encode
   (are [key plaintext cyphertext]
        (= cyphertext (sol/encode plaintext (sol/key-deck sol/ordered-deck key)))
        nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"
@@ -60,3 +68,19 @@
        "bcd" "AAAAAAAAAAAAAAA" "FMUBYBMAXHNQXCJ"
        "cryptonomicon" "AAAAAAAAAAAAAAAAAAAAAAAAA" "SUGSRSXSWQRMXOHIPBFPXARYQ"
        "cryptonomicon" "SOLITAIRE" "KIRAKSFJAN"))
+
+#_(deftest test-decode
+    (are [key plaintext cyphertext]
+         (=  plaintext (sol/decode cyphertext (sol/key-deck sol/ordered-deck key)))
+         nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"
+         "f" "AAAAAAAAAAAAAAA" "XYIUQBMHKKJBEGY"
+         "fo" "AAAAAAAAAAAAAAA" "TUJYMBERLGXNDIW"
+         "foo" "AAAAAAAAAAAAAAA" "ITHZUJIWGRFARMW"
+         "a" "AAAAAAAAAAAAAAA" "XODALGSCULIQNSC"
+         "aa" "AAAAAAAAAAAAAAA" "OHGWMXXCAIMCIQP"
+         "aaa" "AAAAAAAAAAAAAAA" "DCSQYHBQZNGDRUT"
+         "b" "AAAAAAAAAAAAAAA" "XQEEMOITLZVDSQS"
+         "bc" "AAAAAAAAAAAAAAA" "QNGRKQIHCLGWSCE"
+         "bcd" "AAAAAAAAAAAAAAA" "FMUBYBMAXHNQXCJ"
+         "cryptonomicon" "AAAAAAAAAAAAAAAAAAAAAAAAA" "SUGSRSXSWQRMXOHIPBFPXARYQ"
+         "cryptonomicon" "SOLITAIRE" "KIRAKSFJAN"))
