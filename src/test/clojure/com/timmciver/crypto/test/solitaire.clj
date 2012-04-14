@@ -69,9 +69,11 @@
        "cryptonomicon" "AAAAAAAAAAAAAAAAAAAAAAAAA" "SUGSRSXSWQRMXOHIPBFPXARYQ"
        "cryptonomicon" "SOLITAIRE" "KIRAKSFJAN"))
 
-#_(deftest test-decode
+(deftest test-decode
     (are [key plaintext cyphertext]
-         (=  plaintext (sol/decode cyphertext (sol/key-deck sol/ordered-deck key)))
+         (=  plaintext (->> (sol/decode cyphertext (sol/key-deck sol/ordered-deck key))
+                            (take (count plaintext))
+                            (apply str)))
          nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"
          "f" "AAAAAAAAAAAAAAA" "XYIUQBMHKKJBEGY"
          "fo" "AAAAAAAAAAAAAAA" "TUJYMBERLGXNDIW"

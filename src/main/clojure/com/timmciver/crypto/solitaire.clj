@@ -150,8 +150,8 @@ algorithm on the given deck repeatedly producing a key each time."
      (cons key (solitaire-keystream newdeck)))))
 
 (defn encode
-  "Encrypts the message text by performing the solitaire algorithm on the
-given deck. Returns the cypher text as String."
+  "Encrypts the message text using the given deck. Returns the cypher text as
+string."
   [message deck]
   {:pre [(valid-deck? deck)]}
   (let [key-stream (solitaire-keystream deck)
@@ -162,7 +162,13 @@ given deck. Returns the cypher text as String."
     (apply str (map number-to-letter encoded-vals))))
 
 (defn decode
-  "Decrypts the given encoded message using the given keyed deck."
+  "Decrypts the given encoded message using the given keyed deck. Returns the
+  decoded message as a string."
   [encrypted-message deck]
-  {:pre [(valid-deck? deck)]}
-  )
+  {:pre [(valid-deck? deck)
+         (= 0 (mod (count encrypted-message) 5))]}
+  (let [key-stream (solitaire-keystream deck)
+        message-vals (map letter-to-number encrypted-message)
+        decoded-vals (->> (map #(- %1 %2) message-vals key-stream)
+                          (map #(if (<= % 0) (recur (+ % 26)) %)))]
+    (apply str (map number-to-letter decoded-vals))))
