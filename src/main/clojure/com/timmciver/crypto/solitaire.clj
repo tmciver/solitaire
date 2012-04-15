@@ -18,6 +18,17 @@
   [card]
   (< 0 card 55))
 
+(defn- valid-char?
+  "Returns true if the given character is alphabetic, false otherwise."
+  [chr]
+  (or (Character/isUpperCase chr) (Character/isLowerCase chr)))
+
+(defn- valid-string?
+  "Returns true if the given string contains only alphabetic characters, false
+  otherwise."
+  [str]
+  (every? valid-char? str))
+
 (defn- pad-to-mod-5-with-x
   "Returns a string that is the given string padded with \"X\" so that its
   length is an integer number of 5 characters."
@@ -48,7 +59,7 @@
   "Return the integer that corresponds to the given character where \\A (or \\a)
   is 1 and \\Z (or \\z) is 26."
   [chr]
-  {:pre [(or (Character/isUpperCase chr) (Character/isLowerCase chr))]}
+  {:pre [(valid-char? chr)]}
   (- (int (Character/toUpperCase chr)) 64))
 
 (defn move-card-down
@@ -123,7 +134,8 @@ the modified deck. deck is a sequence of integers from 1 to 54 in any order."
 (defn key-deck
   "Uses the given passphrase to key deck using the solitaire algorithm."
   [deck passphrase]
-  {:pre [(valid-deck? deck)]}
+  {:pre [(valid-deck? deck)
+         (valid-string? passphrase)]}
   (if (empty? passphrase)
     deck
     (let [char-val (letter-to-number (first passphrase))
@@ -159,7 +171,8 @@ algorithm on the given deck repeatedly producing a key each time."
   "Encrypts the message text using the given deck. Returns the cypher text as
 string."
   [message deck]
-  {:pre [(valid-deck? deck)]}
+  {:pre [(valid-deck? deck)
+         (valid-string? message)]}
   (let [key-stream (solitaire-keystream deck)
         msg (pad-to-mod-5-with-x message)
         message-vals (map letter-to-number msg)
