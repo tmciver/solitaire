@@ -23,7 +23,7 @@ This gives the following keyed deck:
 
 Once we have a keyed deck we can use it to encrypt a message:
 
-    (def encrypted-message (encode "DONOTUSEPC" keyed-deck))
+    (def encrypted-message (encrypt "DONOTUSEPC" keyed-deck))
 
 and the encrypted message is:
 
@@ -34,7 +34,7 @@ and puncuation are not allowed in either the passphrase or the message to be enc
 
 To decrypt the message:
 
-    (decode encrypted-message keyed-deck)
+    (decrypt encrypted-message keyed-deck)
 
 Which gives the original message back.
 
@@ -42,8 +42,8 @@ It's tradition to group a message to be encrypted into groups of five and to pad
 the message with X's if it's length is not a multiple of five. If you encrypt
 and then decrypt such a message you'll see these X's in the output:
 
-    (def encrypted-message (encode "SECRETMESSAGE" keyed-deck))
-    (def decrypted-message (decode encrypted-message keyed-deck))
+    (def encrypted-message (encrypt "SECRETMESSAGE" keyed-deck))
+    (def decrypted-message (decrypt encrypted-message keyed-deck))
 
 The decrypted message is:
 

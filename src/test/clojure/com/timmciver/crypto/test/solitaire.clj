@@ -58,9 +58,9 @@
   (is (= (take 10 (sol/solitaire-keystream sol/ordered-deck))
          [4 49 10 24 8 51 44 6 4 33])))
 
-(deftest test-encode
+(deftest test-encrypt
   (are [key plaintext cyphertext]
-       (= cyphertext (sol/encode plaintext (sol/key-deck sol/ordered-deck key)))
+       (= cyphertext (sol/encrypt plaintext (sol/key-deck sol/ordered-deck key)))
        nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"
        "f" "AAAAAAAAAAAAAAA" "XYIUQBMHKKJBEGY"
        "fo" "AAAAAAAAAAAAAAA" "TUJYMBERLGXNDIW"
@@ -74,9 +74,9 @@
        "cryptonomicon" "AAAAAAAAAAAAAAAAAAAAAAAAA" "SUGSRSXSWQRMXOHIPBFPXARYQ"
        "cryptonomicon" "SOLITAIRE" "KIRAKSFJAN"))
 
-(deftest test-decode
+(deftest test-decrypt
     (are [key plaintext cyphertext]
-         (=  plaintext (->> (sol/decode cyphertext (sol/key-deck sol/ordered-deck key))
+         (=  plaintext (->> (sol/decrypt cyphertext (sol/key-deck sol/ordered-deck key))
                             (take (count plaintext))
                             (apply str)))
          nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"

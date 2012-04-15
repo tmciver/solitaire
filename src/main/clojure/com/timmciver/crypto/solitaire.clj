@@ -167,7 +167,7 @@ algorithm on the given deck repeatedly producing a key each time."
     (lazy-seq
      (cons key (solitaire-keystream newdeck)))))
 
-(defn encode
+(defn encrypt
   "Encrypts the message text using the given deck. Returns the cypher text as
 string."
   [message deck]
@@ -180,7 +180,7 @@ string."
                           (map #(if (<= % 26) % (recur (- % 26)))))]
     (apply str (map number-to-letter encoded-vals))))
 
-(defn decode
+(defn decrypt
   "Decrypts the given encoded message using the given keyed deck. Returns the
   decoded message as a string."
   [encrypted-message deck]
