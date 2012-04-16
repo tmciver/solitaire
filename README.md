@@ -9,7 +9,7 @@ Encrypting a message with the solitaire encryption algorithm requires a keyed
 deck. The particular order of the cards in a keyed deck does not matter, but it
 must be known to both the sender and receiver of the encrypted message. The deck
 used to encrypt a message includes both jokers and so has 54 cards. This
-code represents a deck as a collection of the integers 1 through
+implementation represents a deck as a collection of the integers 1 through
 54. To key a deck, one starts with a deck in a known order and then uses the
 solitaire alogorithm with a passphrase to re-order the deck. For example, we can
 start with an *ordered deck* and key it with a passphrase as follows:
@@ -29,7 +29,7 @@ and the encrypted message is:
 
     "PTLOOJPWHZ"
 
-Note that the algorith can deal only with alphabetic characters and so spaces
+Note that the algorithm can deal only with alphabetic characters and so spaces
 and puncuation are not allowed in either the passphrase or the message to be encrypted.
 
 To decrypt the message:
@@ -38,9 +38,9 @@ To decrypt the message:
 
 Which gives the original message back.
 
-It's tradition to group a message to be encrypted into groups of five and to pad
-the message with X's if it's length is not a multiple of five. If you encrypt
-and then decrypt such a message you'll see these X's in the output:
+It's tradition to group a message to be encrypted into groups of five characters
+and to pad the message with X's if its length is not a multiple of five. If you
+encrypt and then decrypt such a message you'll see these X's in the output:
 
     (def encrypted-message (encrypt "SECRETMESSAGE" keyed-deck))
     (def decrypted-message (decrypt encrypted-message keyed-deck))
