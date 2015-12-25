@@ -5,18 +5,18 @@
 (def jokerB 54)
 (def ordered-deck (range 1 55))
 
+(defn- valid-card?
+  "Returns true if the given value represents a valid card."
+  [card]
+  (and (integer? card)
+       (< 0 card 55)))
+
 (defn- valid-deck?
-  "Returns true if the given deck is a collection of integers from 1 to 54
-  inclusive and has a size of 54, false otherwise."
+  "Returns true if the given value is a collection of 54 valid cards;
+  false otherwise."
   [deck]
   (and (= (count deck) 54)
-       (every? #(< 0 % 55) deck)))
-
-(defn- valid-card?
-  "Returns true if the given integer represents a valid card (an integer from 1
-  to 54)."
-  [card]
-  (< 0 card 55))
+       (every? valid-card? deck)))
 
 (defn- valid-char?
   "Returns true if the given character is alphabetic, false otherwise."
