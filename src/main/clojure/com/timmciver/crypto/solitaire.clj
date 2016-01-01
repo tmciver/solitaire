@@ -66,18 +66,16 @@
   "With two arguments, moves the given card one space closer to the bottom of
 the deck. With three arguments, moves the given card the given number of spaces
 toward the bottom of the deck. If card moves past bottom of deck, it cycles back
-to the top of the deck. deck must consist of 54 integers from 1 to 54 in any
-order."
+to the top of the deck."
   ([deck card]
      {:pre [(valid-deck? deck) (valid-card? card)]}
-     (let [vdeck (vec deck)
-           old-pos (.indexOf vdeck card)]
-       (if (< old-pos (dec (count vdeck)))
-         (let [nval (get vdeck (inc old-pos))]
-           (assoc (assoc vdeck old-pos nval) (inc old-pos) card))
-         (concat (vector (first vdeck)) (vector card) (butlast (rest vdeck))))))
+     (let [[top [_ next-card & bottom]] (split-with #(not= % card) deck)]
+       (if (not next-card)
+         (list* (first top) card (rest top))
+         (concat top [next-card card] bottom))))
   ([deck card spaces]
-     (if (zero? spaces)
+     {:pre [(valid-deck? deck) (valid-card? card) (integer? spaces)]}
+     (if (<= spaces 0)
        deck
        (recur (move-card-down deck card) card (dec spaces)))))
 
