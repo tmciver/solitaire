@@ -80,26 +80,28 @@ to the top of the deck."
        (recur (move-card-down deck card) card (dec spaces)))))
 
 (defn split-at-jokers
-  "Returns a three-element vector whose first element is the chunk of cards
-before the first joker, whose second element is the chunk of cards starting
-with the first joker followed by all the cards after the first joker but
-before the second joker, and finally whose third element is the chunk of
-cards starting with the second joker followed by the rest of the cards in
-the deck."
+  "Returns a three-element vector whose first element is the chunk of
+  cards before the first joker, whose second element is the chunk of
+  cards starting with the first joker followed by all the cards after
+  the first joker but before the second joker, and finally whose third
+  element is the chunk of cards starting with the second joker
+  followed by the rest of the cards in the deck."
   [deck]
   {:pre [(valid-deck? deck)]}
-  (let [[top therest] (split-with #(not (joker? %)) deck)
-        [middle bottom] (split-with #(not (joker? %)) (rest therest))]
-    [top (cons (first therest) middle) bottom]))
+  (let [[top [first-joker & therest]] (split-with #(not (joker? %)) deck)
+        [middle bottom] (split-with #(not (joker? %)) therest)
+        middle (cons first-joker middle)]
+    [top middle bottom]))
 
 (defn triple-cut
-  "Performs a triple cut around the two Jokers (cards 53 and 54):
-the chunk of cards above the first Joker swaps places with the chunk
-of cards below the second Joker."
+  "Performs a triple cut around the two Jokers: the chunk of cards
+  above the first Joker swaps places with the chunk of cards below the
+  second Joker."
   [deck]
   {:pre [(valid-deck? deck)]}
-  (let [[top middle bottom] (split-at-jokers deck)]
-    (concat (rest bottom) (concat middle (list (first bottom))) top)))
+  (let [[top middle [second-joker & bottom]] (split-at-jokers deck)
+        middle (concat middle (list second-joker))]
+    (concat bottom middle top)))
 
 (defn cut-preserve-bottom
   "Returns a new deck which is the result of performing a cut at position
