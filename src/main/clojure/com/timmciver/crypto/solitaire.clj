@@ -107,7 +107,7 @@ to the top of the deck."
   "Returns a new deck which is the result of performing a cut at position
 and leaving the bottom card in place."
   [deck position]
-  {:pre [(valid-deck? deck) (<= position 54)]}
+  {:pre [(valid-deck? deck) (<= 0 position 54)]}
   (let [[top therest] (split-at position deck)
         [middle bottom] (split-at (dec (count therest)) therest)]
     (concat middle top bottom)))
