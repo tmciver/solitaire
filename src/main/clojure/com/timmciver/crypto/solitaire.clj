@@ -122,11 +122,11 @@ of the last card (a joker is 53) but the last card stays in place."
 
 (defn solitaire
   "Performs one iteration of the solitaire algorithm on deck and returns
-the modified deck. deck is a sequence of integers from 1 to 54 in any order."
+the modified deck."
   [deck]
   {:pre [(valid-deck? deck)]}
   (-> deck
-      (move-card-down jokerA)
+      (move-card-down jokerA 1)
       (move-card-down jokerB 2)
       triple-cut
       count-cut))
