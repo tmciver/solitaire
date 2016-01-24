@@ -37,6 +37,15 @@
         num-pads (if (zero? mod5) 0 (- 5 mod5))]
     (apply str (concat s (repeat num-pads \X)))))
 
+(defn- create-combining-fn
+  "When given a function (should be '+' or '-') for combining the values of a
+  key and a letter from the message to be encrypted, returns a function that
+  combines values and additionally does the necessary normalization."
+  [f]
+  (let [mod26 #(mod % 26)
+        wrap-zero #(if (zero? %) 26 %)]
+    (comp wrap-zero mod26 f)))
+
 (defn joker?
   "Returns true if the card is a joker (53 or 54), false otherwise."
   [card]
@@ -176,9 +185,7 @@ string."
   (let [key-stream (solitaire-keystream deck)
         msg (pad-to-mod-5-with-x message)
         message-vals (map letter-to-number msg)
-        encode-key-and-letter (let [mod26 #(mod % 26)
-                                    wrap-zero #(if (zero? %) 26 %)]
-                                (comp wrap-zero mod26 +))
+        encode-key-and-letter (create-combining-fn +)
         encoded-vals (map encode-key-and-letter key-stream message-vals)]
     (apply str (map number-to-letter encoded-vals))))
 
@@ -190,8 +197,6 @@ string."
          (= 0 (mod (count encrypted-message) 5))]}
   (let [key-stream (solitaire-keystream deck)
         message-vals (map letter-to-number encrypted-message)
-        decode-key-and-letter (let [mod26 #(mod % 26)
-                                    wrap-zero #(if (zero? %) 26 %)]
-                                (comp wrap-zero mod26 -))
+        decode-key-and-letter (create-combining-fn -)
         decoded-vals (map decode-key-and-letter message-vals key-stream)]
     (apply str (map number-to-letter decoded-vals))))
