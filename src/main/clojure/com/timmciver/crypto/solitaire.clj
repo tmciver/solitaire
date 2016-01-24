@@ -176,8 +176,10 @@ string."
   (let [key-stream (solitaire-keystream deck)
         msg (pad-to-mod-5-with-x message)
         message-vals (map letter-to-number msg)
-        encoded-vals (->> (map #(+ %1 %2) key-stream message-vals)
-                          (map #(if (<= % 26) % (recur (- % 26)))))]
+        encode-key-and-letter (let [mod26 #(mod % 26)
+                                    wrap-zero #(if (zero? %) 26 %)]
+                                (comp wrap-zero mod26 +))
+        encoded-vals (map encode-key-and-letter key-stream message-vals)]
     (apply str (map number-to-letter encoded-vals))))
 
 (defn decrypt
@@ -188,6 +190,8 @@ string."
          (= 0 (mod (count encrypted-message) 5))]}
   (let [key-stream (solitaire-keystream deck)
         message-vals (map letter-to-number encrypted-message)
-        decoded-vals (->> (map #(- %1 %2) message-vals key-stream)
-                          (map #(if (<= % 0) (recur (+ % 26)) %)))]
+        decode-key-and-letter (let [mod26 #(mod % 26)
+                                    wrap-zero #(if (zero? %) 26 %)]
+                                (comp wrap-zero mod26 -))
+        decoded-vals (map decode-key-and-letter message-vals key-stream)]
     (apply str (map number-to-letter decoded-vals))))
