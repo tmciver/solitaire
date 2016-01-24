@@ -23,7 +23,7 @@
   [chr]
   (or (Character/isUpperCase chr) (Character/isLowerCase chr)))
 
-(defn- valid-string?
+(defn- valid-message?
   "Returns true if the given string contains only alphabetic characters, false
   otherwise."
   [str]
@@ -135,7 +135,7 @@ the modified deck."
   "Uses the given passphrase to key deck using the solitaire algorithm."
   [deck passphrase]
   {:pre [(valid-deck? deck)
-         (valid-string? passphrase)]}
+         (valid-message? passphrase)]}
   (if (empty? passphrase)
     deck
     (let [char-val (letter-to-number (first passphrase))
@@ -172,7 +172,7 @@ algorithm on the given deck repeatedly producing a key each time."
 string."
   [message deck]
   {:pre [(valid-deck? deck)
-         (valid-string? message)]}
+         (valid-message? message)]}
   (let [key-stream (solitaire-keystream deck)
         msg (pad-to-mod-5-with-x message)
         message-vals (map letter-to-number msg)
