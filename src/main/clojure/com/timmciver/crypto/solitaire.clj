@@ -136,13 +136,12 @@ the modified deck."
   [deck passphrase]
   {:pre [(valid-deck? deck)
          (valid-message? passphrase)]}
-  (if (empty? passphrase)
-    deck
-    (let [char-val (letter-to-number (first passphrase))
-          new-deck (-> deck
-                       solitaire
-                       (cut-preserve-bottom char-val))]
-      (key-deck new-deck (next passphrase)))))
+  (let [key-deck-with-char (fn [deck pass-char]
+                             (let [pass-char-val (letter-to-number pass-char)]
+                               (-> deck
+                                   solitaire
+                                   (cut-preserve-bottom pass-char-val))))]
+    (reduce key-deck-with-char deck passphrase)))
 
 (defn generate-key
   "Takes a deck and returns a vector containing the next valid key and the deck
