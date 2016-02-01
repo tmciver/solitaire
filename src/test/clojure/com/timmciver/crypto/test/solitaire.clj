@@ -62,7 +62,8 @@
 
 (deftest test-encrypt
   (are [key plaintext cyphertext]
-       (= cyphertext (sol/encrypt plaintext (sol/key-deck sol/ordered-deck key)))
+       (let [padded-plaintext (sol/pad-to-mod-5-with-x plaintext)]
+         (= cyphertext (sol/encrypt padded-plaintext (sol/key-deck sol/ordered-deck key))))
        nil "AAAAAAAAAAAAAAA" "EXKYIZSGEHUNTIQ"
        "f" "AAAAAAAAAAAAAAA" "XYIUQBMHKKJBEGY"
        "fo" "AAAAAAAAAAAAAAA" "TUJYMBERLGXNDIW"

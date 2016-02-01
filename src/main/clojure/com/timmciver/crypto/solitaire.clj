@@ -29,22 +29,13 @@
   [str]
   (every? valid-char? str))
 
-(defn- pad-to-mod-5-with-x
+(defn pad-to-mod-5-with-x
   "Returns a string that is the given string padded with \"X\" so that its
   length is an integer number of 5 characters."
   [s]
   (let [mod5 (mod (count s) 5)
         num-pads (if (zero? mod5) 0 (- 5 mod5))]
     (apply str (concat s (repeat num-pads \X)))))
-
-(defn- create-combining-fn
-  "When given a function (should be '+' or '-') for combining the values of a
-  key and a letter from the message to be encrypted, returns a function that
-  combines values and additionally does the necessary normalization."
-  [f]
-  (let [mod26 #(mod % 26)
-        wrap-zero #(if (zero? %) 26 %)]
-    (comp wrap-zero mod26 f)))
 
 (defn joker?
   "Returns true if the card is a joker (53 or 54), false otherwise."
@@ -176,27 +167,28 @@ algorithm on the given deck repeatedly producing a key each time."
     (lazy-seq
      (cons key (solitaire-keystream newdeck)))))
 
-(defn encrypt
-  "Encrypts the message text using the given deck. Returns the cypher text as
-string."
-  [message deck]
-  {:pre [(valid-deck? deck)
-         (valid-message? message)]}
-  (let [key-stream (solitaire-keystream deck)
-        msg (pad-to-mod-5-with-x message)
-        message-vals (map letter-to-number msg)
-        encode-key-and-letter (create-combining-fn +)
-        encoded-vals (map encode-key-and-letter key-stream message-vals)]
-    (apply str (map number-to-letter encoded-vals))))
+(defn- create-combining-fn
+  "When given a function (should be '+' or '-') for combining the values of a
+  key and a letter from the message to be encrypted, returns a function that
+  combines values and additionally does the necessary normalization."
+  [f]
+  (let [mod26 #(mod % 26)
+        wrap-zero #(if (zero? %) 26 %)]
+    (comp wrap-zero mod26 f)))
 
-(defn decrypt
-  "Decrypts the given encoded message using the given keyed deck. Returns the
-  decoded message as a string."
-  [encrypted-message deck]
-  {:pre [(valid-deck? deck)
-         (= 0 (mod (count encrypted-message) 5))]}
-  (let [key-stream (solitaire-keystream deck)
-        message-vals (map letter-to-number encrypted-message)
-        decode-key-and-letter (create-combining-fn -)
-        decoded-vals (map decode-key-and-letter message-vals key-stream)]
-    (apply str (map number-to-letter decoded-vals))))
+(defn- create-encrypt-decrypt-fn
+  "A higher-order-function used to create either the `encrypt` or `decrypt`
+  function. Factors out the duplication that would exist if these functions were
+  coded without it."
+  [combining-fn]
+  (fn [text deck]
+    {:pre [(valid-deck? deck)
+           (valid-message? text)]}
+    (let [key-stream (solitaire-keystream deck)
+          message-vals (map letter-to-number text)
+          combined-vals (map combining-fn key-stream message-vals)]
+      (apply str (map number-to-letter combined-vals)))))
+
+(def encrypt (create-encrypt-decrypt-fn (create-combining-fn +)))
+
+(def decrypt (create-encrypt-decrypt-fn (create-combining-fn #(- %2 %1))))
