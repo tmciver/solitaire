@@ -39,13 +39,22 @@ To decrypt the message:
 Which gives the original message back.
 
 It's tradition to group a message to be encrypted into groups of five characters
-and to pad the message with X's if its length is not a multiple of five. If you
-encrypt and then decrypt such a message you'll see these X's in the output:
+and to pad the message with X's if its length is not a multiple of five. If your
+message is not an integer multiple of five characters and you want to make it
+so, use the function `pad-to-mod-5-with-x`:
 
-    (def encrypted-message (encrypt "SECRETMESSAGE" keyed-deck))
+    (def my-message (pad-to-mod-5-with-x "SECRETMESSAGE"))
+
+which gives:
+
+    "SECRETMESSAGEXX"
+
+Then, encrypt and decrypt normally:
+
+    (def encrypted-message (encrypt my-message keyed-deck))
     (def decrypted-message (decrypt encrypted-message keyed-deck))
 
-The decrypted message is:
+The decrypted message is as exptected:
 
     "SECRETMESSAGEXX"
 
